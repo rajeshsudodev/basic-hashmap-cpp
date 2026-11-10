@@ -235,11 +235,9 @@ int main()
 
     hashMap.traversal();
     
-    {   
 
         if(std:: string* value = hashMap.searchTable(6)) cout << *value << '\n';
         else cout << "Key not found !\n";
-    }
     {
         hashMap.erase(100);
     }
