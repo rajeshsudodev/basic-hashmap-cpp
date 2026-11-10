@@ -190,7 +190,6 @@ int main()
         if(it->first != 0)
         cout << it->first << " " << it->second << endl;
     }
-    
     hashMap.erase(6);
     hashMap.traversal();
 
@@ -198,33 +197,3 @@ int main()
     cout << "Key 7 value : " << *(hashMap.searchTable(7)) << endl;
     return 0;
 }
-
-
-
-  
-    // std:: unordered_map <int ,std:: string> map;
-
-    // map[0] = "zero";
-    // map[1] = "one";
-    // map[2] = "two";
-    // map[3] = "three";
-    // map[4] = "four";
-    // map[5] = "five";
-    // map[6] = "six";
-    // map[7] = "seven";
-    // map[8] = "eight";
-    // map[9] = "nine";
-    // map[10] = "ten";
-    // map[11] = "eleven";
-    // map[12] = "twelve";
-    // map[13] = "thirteen";
-    // map[14] = "fourteen";
-
-    // cout << "Size : " << map.size() << endl;
-    // cout << "Bucket Count : " << map.bucket_count() << endl;
-    // map_traversal(map);
-    // map.erase(14);
-    // map.erase(13);
-    // map.erase(100);
-    
-    // map_traversal(map);
