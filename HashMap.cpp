@@ -1,4 +1,5 @@
-// HashTable Simple Implementation Practice 
+// Simple HashTable Implementation Practice 
+// Type - Single Chaining 
 
 /** 
  * HEADERS
@@ -9,33 +10,36 @@
 #include <list>
 #include <utility>
 
-using std:: cout;
-using std:: endl;
+using std:: cout , std:: endl , std:: cin;
 
 
 /** 
- * Design HashTable
+ *  HashTable Design
  */
 class HashTable{
 private: 
-    static const unsigned int hashGroups = 10; 
-    std:: list< std:: pair<int, std:: string>> table[hashGroups];// why static const is required for hashGroups for using again in the private members
+    // static const unsigned int hashGroups = 10; 
+    static const unsigned int bucketCount = 10;
+    std:: list< std:: pair<int, std:: string>> table[bucketCount];// why static const is required for bucketCount for using again in the private members
     size_t size = 0;
-    unsigned int bucketCount = 0;
-public:
+    public:
 
-    // HashTable() = delete;
-    // HashTable(const HashTable&) = delete;
-    // HashTable(HashTable&&) = delete;
+    // Default constructor only allowed 
+    HashTable() {}
+
+    // copy and move semantics forebidden 
+    HashTable(const HashTable&) = delete;
+    HashTable(HashTable&&) = delete;
 
     void traversal(void) const ;
+    bool tableEmpty() const ;
     void pushBack(int , std:: string);
     void erase(int) ;
-    unsigned int hash(const int);
+    unsigned int hash(const int) const;
     std:: list<std:: pair<int , std:: string>>::iterator find(const int key);
-    size_t bucketSize(const int key);
+    size_t bucketSize(const int key) const;
     size_t Size() const ;
-    std:: string* searchTable(const int key);
+    std:: string* searchTable(const int key) ;
 
 };
 
@@ -46,7 +50,7 @@ public:
  * use dereference operator to get actual data
  */
 
-std:: string* HashTable:: searchTable(const int key )
+std:: string* HashTable:: searchTable(const int key ) 
 {
     std::list<std:: pair <int, std:: string >> :: iterator it = find(key);
 
@@ -71,12 +75,13 @@ void HashTable:: traversal(void) const
         cout << bucket << " : ";
         if(table[bucket].empty()) { cout << 0  << endl;continue;}
         
+        std:: list< std:: pair< int, std:: string >> :: const_iterator cit = std:: begin(table[bucket]);
+        for( cit ; cit != std:: end(table[bucket]) ; ++cit)
         // for(std:: list<std:: pair<int , std:: string>> :: iterator it = table[bucket].begin() ; it != table[bucket].end(); ++it)
 
-        for(auto it = table[bucket].begin() ; it != table[bucket].end() ; ++it)
         { 
 
-            cout << it->first << " " << it->second << " | ";
+            cout << cit->first << " " << cit->second << " | ";
         }
         cout << endl;
     }
@@ -98,7 +103,6 @@ std::list <std:: pair<int , std:: string>>::iterator HashTable:: find(const int 
     {
         if(it->first == key) return it; // return pair it  when the key found / exists in list<pair<>>
     }
-
     return it;  // returns end of the current list's end
 }
 
@@ -106,9 +110,10 @@ std::list <std:: pair<int , std:: string>>::iterator HashTable:: find(const int 
  * Generates a hash key by using modulo of BucketCount 
  * Returns the generated hash key
  */
-unsigned int HashTable:: hash(const int key)  
+
+ unsigned int HashTable:: hash(const int key)  const
 {
-    unsigned int bucketIndex = key % hashGroups;  
+    unsigned int bucketIndex = key % bucketCount;  
     return bucketIndex;
 }
 
@@ -119,10 +124,18 @@ unsigned int HashTable:: hash(const int key)
 void HashTable:: pushBack(int key , std:: string value) 
 {
 
+
     unsigned int bucketIndex = hash(key);
+    std:: list<std:: pair<int ,std:: string>> :: iterator it = find(key);
+    if(it != std:: end (table[bucketIndex])) {
+        cout << "Key : " << key << " Already Exists , Modifiying in place !\n";
+        it->second = value;
+        return ;
+    }
     table[bucketIndex].push_back({key, value});
-    
-    if(!(table[bucketIndex].empty())) ++bucketCount;  // tracking bucket count
+
+
+
     ++size;
 }
 
@@ -139,19 +152,22 @@ void HashTable:: erase(const int key)
     // }
     std:: list<std:: pair < int , std:: string >>:: iterator it = find(key);
 
-    if(it == table[bucketIndex].end()) 
+    // if(it == table[bucketIndex].end()) 
+    if(it == std:: end(table[bucketIndex])) 
     {
-    return ;
+        cout << "Item " << key << " not Exists !\n";
+        return ;
     }
     table[bucketIndex].erase(it);
     --size;
 } 
 
 /**
- * Give input of the key 
+
+* takes key as a given input 
  * returns the count of elements in the bucket which holds the key
  */
-size_t HashTable:: bucketSize(const int key)
+size_t HashTable:: bucketSize(const int key) const
 {
     unsigned int bucketIndex = hash(key);
     size_t size = 0;
@@ -163,10 +179,28 @@ size_t HashTable:: bucketSize(const int key)
     return size;
 }
 
+
+/**
+ * Checking whether HashTable is Empty 
+ * Traversing each bucket and tracking its size 
+ */
+bool HashTable:: tableEmpty() const
+{
+    unsigned int sum {};
+    for(unsigned int i {}; i < bucketCount ; ++i)
+    {
+        sum += table[i].size();
+    }
+
+    if(!sum) return true;
+    return false;
+}
 int main()
 {
   
     HashTable hashMap;
+
+    
 
     cout << hashMap.Size() << endl;
     hashMap.pushBack(1, "one");
@@ -175,6 +209,12 @@ int main()
     hashMap.pushBack(4, "four");
     hashMap.pushBack(5, "five");
     hashMap.pushBack(6, "six");
+    hashMap.pushBack(7, "seven");
+    hashMap.pushBack(7, "seven");
+    hashMap.pushBack(7, "seven");
+    hashMap.pushBack(7, "seven");
+    hashMap.pushBack(7, "seven");
+    hashMap.pushBack(7, "seven");
     hashMap.pushBack(7, "seven");
     cout << hashMap.Size() << endl;
 
@@ -189,6 +229,9 @@ int main()
         auto it = hashMap.find(100);
         if(it->first != 0)
         cout << it->first << " " << it->second << endl;
+    }
+    {
+        hashMap.erase(100);
     }
     hashMap.erase(6);
     hashMap.traversal();
