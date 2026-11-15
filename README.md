@@ -1,4 +1,4 @@
-# Basic HashTable Implementation in C++
+# Basic Generic HashTable Implementation in C++
 
 A basic HashTable implementation in C++ using **Separate Chaining** for collision resolution.
 
@@ -19,8 +19,8 @@ The primary objective of this project is to understand the internal working of a
 | Data Structure        | HashTable             |
 | Collision Resolution  | Separate Chaining     |
 | Bucket Storage        | Array of `std::list`  |
-| Key Type              | `int`                 |
-| Value Type            | `std::string`         |
+| Key Type              | Generic               |
+| Value Type            | Generic               |
 | Hash Function         | Modulo-based hashing  |
 | Bucket Count          | 10 (Fixed)            |
 
